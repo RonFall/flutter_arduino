@@ -1,0 +1,39 @@
+name: flutter_arduino
+description: Flutter Arduino project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.2.6 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+
+  #---NETWORK DATA---#
+  firebase_core: 2.25.3
+  firebase_auth: 4.17.3
+  firebase_database: 10.4.4
+
+  #---STATE MANAGEMENT---#
+  flutter_riverpod: 2.4.10
+
+  #---MODEL---#
+  freezed_annotation: 2.4.1
+  json_annotation: 4.8.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.1
+
+  #---GENERATOR---#
+  build_runner: 2.4.8
+  freezed: 2.4.6
+  json_serializable: 6.7.1
+
+flutter:
+  uses-material-design: true
