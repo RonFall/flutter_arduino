@@ -15,12 +15,12 @@ class DevicesStateNotifier extends StateNotifier<AsyncValue<DevicesData?>> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final response = await _database.once();
-      final data = response.snapshot.child('devices/antonov').value as Map;
+      final data = response.snapshot.child('devices').value as Map?;
 
       // Заполнение данных происходит прямо в логике, так как реализация проще
       return DevicesData(
-        humidity: data['humidity'],
-        temperature: data['temperature'],
+        humidity: data?['humidity'],
+        temperature: data?['temperature'],
       );
     });
   }

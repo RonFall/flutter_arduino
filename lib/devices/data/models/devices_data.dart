@@ -4,7 +4,7 @@ part 'devices_data.freezed.dart';
 
 @freezed
 class DevicesData with _$DevicesData {
-  /// Показатели датчиков тепличного хозяйства
+  /// Показатели датчика DHT11
   const factory DevicesData({
     /// Влажность
     int? humidity,

@@ -1,10 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_arduino/app/presentation/app_colors.dart';
-import 'package:flutter_arduino/app/presentation/app_text_style.dart';
-import 'package:flutter_arduino/app/presentation/components/app_textfield.dart';
-import 'package:flutter_arduino/app/presentation/components/components_utils.dart';
 import 'package:flutter_arduino/auth/domain/auth_scope_providers.dart';
+import 'package:flutter_arduino/devices/presentation/screens/devices_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthScreen extends ConsumerWidget {
@@ -18,10 +15,17 @@ class AuthScreen extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.accentColor,
-        title: const Text('Авторизация', style: AppTextStyle.appBarStyle),
+        backgroundColor: const Color(0xFF2252AB),
+        title: const Text(
+          'Авторизация',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Center(
@@ -32,27 +36,29 @@ class AuthScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AppTextField(
+              child: TextField(
                 controller: loginController,
-                hintText: 'Email',
-                fieldAction: TextInputAction.next,
+                decoration: const InputDecoration(hintText: 'Email'),
+                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
-                next: true,
+                onEditingComplete: () => FocusScope.of(context).nextFocus(),
               ),
             ),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AppTextField(
+              child: TextField(
                 controller: passController,
-                hintText: 'Пароль',
-                onComplete: () {
+                obscureText: true,
+                decoration: const InputDecoration(hintText: 'Пароль'),
+                onEditingComplete: () {
                   _completeInput(
                     context,
                     ref,
                     email: loginController.text.trim(),
                     pass: passController.text.trim(),
                   );
+                  FocusScope.of(context).unfocus();
                 },
               ),
             ),
@@ -63,27 +69,43 @@ class AuthScreen extends ConsumerWidget {
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: AppButton(
+                  child: SizedBox(
                     height: 48,
                     width: double.maxFinite,
-                    text: isLoading ? null : 'Войти',
-                    textStyle: AppTextStyle.buttonTextStyle,
-                    buttonColor: AppColors.accentColor,
-                    child: isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.white,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _completeInput(
+                          context,
+                          ref,
+                          email: loginController.text.trim(),
+                          pass: passController.text.trim(),
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0xFF2252AB),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'Войти',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )
-                        : null,
-                    onPressed: () {
-                      _completeInput(
-                        context,
-                        ref,
-                        email: loginController.text.trim(),
-                        pass: passController.text.trim(),
-                      );
-                    },
+                    ),
                   ),
                 );
               },
@@ -100,7 +122,8 @@ class AuthScreen extends ConsumerWidget {
     required String email,
     required String pass,
   }) {
-    if (isKeyboardVisible(context)) FocusScope.of(context).unfocus();
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 1;
+    if (isKeyboardVisible) FocusScope.of(context).unfocus();
     ref.read(authStateProvider.notifier).login(email: email, password: pass);
   }
 
@@ -114,7 +137,10 @@ class AuthScreen extends ConsumerWidget {
             SnackBar(
               content: Text(
                 'Ошибка: ${_mapFirebaseError(next.error)}',
-                style: AppTextStyle.snackBarTextStyle,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
               duration: const Duration(seconds: 3),
               onVisible: () {
@@ -125,6 +151,12 @@ class AuthScreen extends ConsumerWidget {
           await snackBar.closed;
           ref.read(hasSnackBarAppearedProvider.notifier).state = false;
         }
+      }
+
+      if (next.hasValue && context.mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const DevicesScreen()),
+        );
       }
     });
   }

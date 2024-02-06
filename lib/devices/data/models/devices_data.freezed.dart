@@ -19,9 +19,6 @@ mixin _$DevicesData {
   /// Влажность
   int? get humidity => throw _privateConstructorUsedError;
 
-  /// Освещенность
-  int? get illumination => throw _privateConstructorUsedError;
-
   /// Температура
   int? get temperature => throw _privateConstructorUsedError;
 
@@ -36,7 +33,7 @@ abstract class $DevicesDataCopyWith<$Res> {
           DevicesData value, $Res Function(DevicesData) then) =
       _$DevicesDataCopyWithImpl<$Res, DevicesData>;
   @useResult
-  $Res call({int? humidity, int? illumination, int? temperature});
+  $Res call({int? humidity, int? temperature});
 }
 
 /// @nodoc
@@ -53,17 +50,12 @@ class _$DevicesDataCopyWithImpl<$Res, $Val extends DevicesData>
   @override
   $Res call({
     Object? humidity = freezed,
-    Object? illumination = freezed,
     Object? temperature = freezed,
   }) {
     return _then(_value.copyWith(
       humidity: freezed == humidity
           ? _value.humidity
           : humidity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      illumination: freezed == illumination
-          ? _value.illumination
-          : illumination // ignore: cast_nullable_to_non_nullable
               as int?,
       temperature: freezed == temperature
           ? _value.temperature
@@ -74,39 +66,34 @@ class _$DevicesDataCopyWithImpl<$Res, $Val extends DevicesData>
 }
 
 /// @nodoc
-abstract class _$$_DevicesDataCopyWith<$Res>
+abstract class _$$DevicesDataImplCopyWith<$Res>
     implements $DevicesDataCopyWith<$Res> {
-  factory _$$_DevicesDataCopyWith(
-          _$_DevicesData value, $Res Function(_$_DevicesData) then) =
-      __$$_DevicesDataCopyWithImpl<$Res>;
+  factory _$$DevicesDataImplCopyWith(
+          _$DevicesDataImpl value, $Res Function(_$DevicesDataImpl) then) =
+      __$$DevicesDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? humidity, int? illumination, int? temperature});
+  $Res call({int? humidity, int? temperature});
 }
 
 /// @nodoc
-class __$$_DevicesDataCopyWithImpl<$Res>
-    extends _$DevicesDataCopyWithImpl<$Res, _$_DevicesData>
-    implements _$$_DevicesDataCopyWith<$Res> {
-  __$$_DevicesDataCopyWithImpl(
-      _$_DevicesData _value, $Res Function(_$_DevicesData) _then)
+class __$$DevicesDataImplCopyWithImpl<$Res>
+    extends _$DevicesDataCopyWithImpl<$Res, _$DevicesDataImpl>
+    implements _$$DevicesDataImplCopyWith<$Res> {
+  __$$DevicesDataImplCopyWithImpl(
+      _$DevicesDataImpl _value, $Res Function(_$DevicesDataImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? humidity = freezed,
-    Object? illumination = freezed,
     Object? temperature = freezed,
   }) {
-    return _then(_$_DevicesData(
+    return _then(_$DevicesDataImpl(
       humidity: freezed == humidity
           ? _value.humidity
           : humidity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      illumination: freezed == illumination
-          ? _value.illumination
-          : illumination // ignore: cast_nullable_to_non_nullable
               as int?,
       temperature: freezed == temperature
           ? _value.temperature
@@ -118,16 +105,12 @@ class __$$_DevicesDataCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_DevicesData implements _DevicesData {
-  const _$_DevicesData({this.humidity, this.illumination, this.temperature});
+class _$DevicesDataImpl implements _DevicesData {
+  const _$DevicesDataImpl({this.humidity, this.temperature});
 
   /// Влажность
   @override
   final int? humidity;
-
-  /// Освещенность
-  @override
-  final int? illumination;
 
   /// Температура
   @override
@@ -135,38 +118,33 @@ class _$_DevicesData implements _DevicesData {
 
   @override
   String toString() {
-    return 'DevicesData(humidity: $humidity, illumination: $illumination, temperature: $temperature)';
+    return 'DevicesData(humidity: $humidity, temperature: $temperature)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_DevicesData &&
+            other is _$DevicesDataImpl &&
             (identical(other.humidity, humidity) ||
                 other.humidity == humidity) &&
-            (identical(other.illumination, illumination) ||
-                other.illumination == illumination) &&
             (identical(other.temperature, temperature) ||
                 other.temperature == temperature));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, humidity, illumination, temperature);
+  int get hashCode => Object.hash(runtimeType, humidity, temperature);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_DevicesDataCopyWith<_$_DevicesData> get copyWith =>
-      __$$_DevicesDataCopyWithImpl<_$_DevicesData>(this, _$identity);
+  _$$DevicesDataImplCopyWith<_$DevicesDataImpl> get copyWith =>
+      __$$DevicesDataImplCopyWithImpl<_$DevicesDataImpl>(this, _$identity);
 }
 
 abstract class _DevicesData implements DevicesData {
-  const factory _DevicesData(
-      {final int? humidity,
-      final int? illumination,
-      final int? temperature}) = _$_DevicesData;
+  const factory _DevicesData({final int? humidity, final int? temperature}) =
+      _$DevicesDataImpl;
 
   @override
 
@@ -174,14 +152,10 @@ abstract class _DevicesData implements DevicesData {
   int? get humidity;
   @override
 
-  /// Освещенность
-  int? get illumination;
-  @override
-
   /// Температура
   int? get temperature;
   @override
   @JsonKey(ignore: true)
-  _$$_DevicesDataCopyWith<_$_DevicesData> get copyWith =>
+  _$$DevicesDataImplCopyWith<_$DevicesDataImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
