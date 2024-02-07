@@ -8,7 +8,10 @@ class DevicesData with EquatableMixin {
     required this.temperature,
   });
 
+  /// Влажность
   final int? humidity;
+
+  /// Температура
   final int? temperature;
 
   @override

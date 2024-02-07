@@ -6,5 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final devicesStateProvider =
     StateNotifierProvider<DevicesStateNotifier, AsyncValue<DevicesData?>>((_) {
   return DevicesStateNotifier(database: FirebaseDatabase.instance.ref())
+    // При входе на экран, где используется этот провайдер сразу же начнется
+    // запрос в сеть посредством вызова getDevicesData
     ..getDevicesData();
 });

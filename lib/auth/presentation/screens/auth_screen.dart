@@ -9,6 +9,10 @@ class AuthScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Получаем значение TextEditingController, которое используем для
+    // текстового поля. ref.watch будет перестраивать виджет каждый раз, когда
+    // его значение меняется, например, при вызове у этого
+    // TextEditingController метода dispose
     final loginController = ref.watch(loginAuthProvider);
     final passController = ref.watch(passAuthProvider);
     _listenAuthState(context, ref);
@@ -19,7 +23,7 @@ class AuthScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF2252AB),
         title: const Text(
-          'Авторизация',
+          'Аутентификация',
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -116,43 +120,52 @@ class AuthScreen extends ConsumerWidget {
     );
   }
 
+  /// Метод завершения ввода логина и пароля
   void _completeInput(
     BuildContext context,
     WidgetRef ref, {
     required String email,
     required String pass,
   }) {
+    // Если у пользователя открыта клавиатура - скрываем ее
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 1;
     if (isKeyboardVisible) FocusScope.of(context).unfocus();
+
+    // Вызываем функцию для входа
     ref.read(authStateProvider.notifier).login(email: email, password: pass);
   }
 
+  /// Отслеживает состояние авторизованности пользователя
   void _listenAuthState(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue<User?>>(authStateProvider, (previous, next) async {
+      // Получаем значение флага для SnackBar
       final hasSnackBarAppeared = ref.watch(hasSnackBarAppearedProvider);
 
-      if (next.hasError) {
-        if (!hasSnackBarAppeared) {
-          final snackBar = ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Ошибка: ${_mapFirebaseError(next.error)}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
+      // В случае ошибки показываем информационное сообщение
+      if (next.hasError && !hasSnackBarAppeared) {
+        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Ошибка: ${_mapFirebaseError(next.error)}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
               ),
-              duration: const Duration(seconds: 3),
-              onVisible: () {
-                ref.read(hasSnackBarAppearedProvider.notifier).state = true;
-              },
             ),
-          );
-          await snackBar.closed;
-          ref.read(hasSnackBarAppearedProvider.notifier).state = false;
-        }
+            duration: const Duration(seconds: 3),
+            onVisible: () {
+              // Меняем значение при показе на true, что позволит ограничить
+              // показ во время вывода этого сообщения
+              ref.read(hasSnackBarAppearedProvider.notifier).state = true;
+            },
+          ),
+        );
+        await snackBar.closed;
+        // Меняем обратно на false после завершения показа
+        ref.read(hasSnackBarAppearedProvider.notifier).state = false;
       }
 
+      // В случае успешной авторизации переходим на экран устройств
       if (next.hasValue && context.mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const DevicesScreen()),

@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final loginAuthProvider = Provider.autoDispose<TextEditingController>((ref) {
   final controller = TextEditingController();
+  // onDispose срабатывает в местах, где использовался
+  // ref.watch(loginAuthProvider). После выхода из экрана этот текстовый
+  // контроллер закрывается
   ref.onDispose(() => controller.dispose());
   return controller;
 });
@@ -16,12 +19,15 @@ final passAuthProvider = Provider.autoDispose<TextEditingController>((ref) {
   return controller;
 });
 
+/// Провайдер для определения показа информационного сообщения. По факту булево,
+/// которое нужно, чтобы ограничить показ SnackBar в UI
 final hasSnackBarAppearedProvider = StateProvider<bool>((ref) => false);
 
 final userProvider = Provider<User?>(
   (ref) => ref.watch(authStateProvider).value,
 );
 
+/// Провайдер текущего состояния авторизованности
 final authStateProvider =
     StateNotifierProvider<AuthStateNotifier, AsyncValue<User?>>(
   (_) => AuthStateNotifier(service: AuthService()),

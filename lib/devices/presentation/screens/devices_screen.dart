@@ -12,6 +12,8 @@ class DevicesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
+    // authStateProvider провайдер вызовется по нажатию кнопки выхода. В теле
+    // этого слушателя стоит проверка
     ref.listen<AsyncValue<User?>>(authStateProvider, (prev, next) {
       final uid = next.value?.uid;
 
@@ -64,6 +66,9 @@ class DevicesScreen extends ConsumerWidget {
           )
         ],
       ),
+      // Метод when в асинхронных операциях в Riverpod позволяет удобно
+      // распределять события загрузки, ошибки и успеха на нужные виджеты,
+      // которые описаны здесь
       body: deviceData.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: Color(0xFF2252AB)),
@@ -72,6 +77,7 @@ class DevicesScreen extends ConsumerWidget {
           return Center(
             child: _DevicesErrorView(
               onPressed: () {
+                // Перезапрашиваем данные в случае ошибки
                 ref.read(devicesStateProvider.notifier).getDevicesData();
               },
             ),
@@ -141,6 +147,7 @@ class DevicesScreen extends ConsumerWidget {
   }
 }
 
+/// Виджет, который отобразится при возникшей ошибке получения данных
 class _DevicesErrorView extends StatelessWidget {
   const _DevicesErrorView({this.onPressed});
 

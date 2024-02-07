@@ -14,10 +14,14 @@ class DevicesStateNotifier extends StateNotifier<AsyncValue<DevicesData?>> {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      // Метод once в данном случае опрашивает БД лишь раз, чтобы получить
+      // данные
       final response = await _database.once();
+      // А затем просто достаем из пути, который мы указывали при написании
+      // кода для ESP32
       final data = response.snapshot.child('devices').value as Map?;
 
-      // Заполнение данных происходит прямо в логике, так как реализация проще
+      // Заполнение данных происходит прямо в логике, так как реализация простая
       return DevicesData(
         humidity: data?['humidity'],
         temperature: data?['temperature'],

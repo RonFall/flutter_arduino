@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// Сервис аутентификации Firebase
 class AuthService {
+  /// Если аутентификация, либо авторизация прошла успешно, значение этого
+  /// геттера становится заполненная модель [User]
   User? get user => FirebaseAuth.instance.currentUser;
 
   String? get userId => user?.uid;
