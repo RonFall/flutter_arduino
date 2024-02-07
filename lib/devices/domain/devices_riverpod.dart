@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_arduino/devices/data/models/devices_data.dart';
+import 'package:flutter_arduino/devices/domain/model/devices_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DevicesStateNotifier extends StateNotifier<AsyncValue<DevicesData?>> {
