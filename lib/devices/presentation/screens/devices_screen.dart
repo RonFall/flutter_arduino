@@ -5,6 +5,7 @@ import 'package:flutter_arduino/auth/domain/auth_scope_providers.dart';
 import 'package:flutter_arduino/auth/presentation/screens/auth_screen.dart';
 import 'package:flutter_arduino/devices/domain/devices_scope_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class DevicesScreen extends ConsumerWidget {
   const DevicesScreen({super.key});
@@ -84,62 +85,66 @@ class DevicesScreen extends ConsumerWidget {
           );
         },
         data: (data) {
-          if (data == null) return const SizedBox.shrink();
+          if (data == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Не удалось получить данные',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(devicesStateProvider.notifier).getDevicesData();
+                    },
+                    child: const Text('Обновить'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Flexible(
-                    child: Text(
-                      'Температура: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+          final temperature = data.temperature;
+          final humidity = data.humidity;
+          final readingDateTime = data.readingDateTime;
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (readingDateTime != null)
                   Text(
-                    '${data.temperature ?? 'Нет данных'}',
+                    'Время последнего показания: '
+                    '${DateFormat('HH:mm:ss dd.MM.yyyy').format(readingDateTime)}',
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Flexible(
-                    child: Text(
-                      'Влажность: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                Text(
+                  temperature != null
+                      ? 'Температура: $temperature ℃'
+                      : 'Нет данных по температуре',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                    '${data.humidity ?? 'Нет данных'}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  humidity != null
+                      ? 'Влажность: $humidity %'
+                      : 'Нет данных по влажности',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  ref.read(devicesStateProvider.notifier).getDevicesData();
-                },
-                child: const Text('Обновить'),
-              ),
-            ],
+                ),
+              ],
+            ),
           );
         },
       ),

@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_arduino/devices/domain/model/devices_data.dart';
+import 'package:flutter_arduino/devices/domain/models/devices_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DevicesStateNotifier extends StateNotifier<AsyncValue<DevicesData?>> {
@@ -9,23 +11,22 @@ class DevicesStateNotifier extends StateNotifier<AsyncValue<DevicesData?>> {
 
   final DatabaseReference _database;
 
+  late StreamSubscription<DatabaseEvent> _subscription;
+
   Future<void> getDevicesData() async {
-    if (state.isLoading) return;
-
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      // Метод once в данном случае опрашивает БД лишь раз, чтобы получить
-      // данные
-      final response = await _database.once();
-      // А затем просто достаем из пути, который мы указывали при написании
-      // кода для ESP32
-      final data = response.snapshot.child('devices').value as Map?;
+    // Обновление данных происходит в реальном времени
+    _subscription = _database.onValue.listen((event) {
+      final data = event.snapshot.child('devices').value as Map?;
+      if (data == null) return;
 
-      // Заполнение данных происходит прямо в логике, так как реализация простая
-      return DevicesData(
-        humidity: data?['humidity'],
-        temperature: data?['temperature'],
-      );
-    });
+      state = AsyncData(DevicesData.fromJson(data));
+    }, onError: (e, s) => state = AsyncError(e, s));
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }
